@@ -1,0 +1,312 @@
+//author:Manjuram Gajanan Prabhdesssai
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+// Bill class to represent a legislative bill
+class Bill {
+    // Private fields for encapsulation
+    private String title;
+    private String description;
+    private boolean isPassed;
+
+    // Constructor to initialize the Bill object
+    public Bill(String title, String description) {
+        this.title = title;
+        this.description = description;
+        this.isPassed = false; // Initially, the bill is not passed
+    }
+
+    // Getter method for the title (encapsulation)
+    public String getTitle() {
+        return title;
+    }
+
+    // Method to pass the bill (set isPassed to true)
+    public void pass() {
+        this.isPassed = true;
+    }
+
+    // Method to return a string representation of the bill's details
+    @Override
+    public String toString() {
+        return "Title: " + title + "\nDescription: " + description + "\nPassed: " + (isPassed ? "Yes" : "No") + "\n";
+    }
+}
+
+// Mla class to represent Members of Legislative Assembly
+class Mla {
+    Scanner scanner; // Scanner for user input
+    private List<Bill> bills = new ArrayList<>(); // List to store bills
+
+    // Constructor for initializing with a scanner
+    public Mla(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    // Method to display MLA-related options (Legislature)
+    public void list_mla() {
+        while (true) {
+            System.out.println("******Welcome to Legislature*********");
+            System.out.println("1: The Speaker");
+            System.out.println("2: Deputy Speaker");
+            System.out.println("3: Opposition Leader");
+            System.out.println("4: MLA's");
+            System.out.println("5: Exit");
+            System.out.print("Please Enter your choice: ");
+            int lan = scanner.nextInt();
+            scanner.nextLine();
+
+            // Display details based on the user input
+            switch (lan) {
+                case 1 -> {
+                    System.out.println("************The Speaker************");
+                    System.out.println("Name: Shri Ramesh Tawadkar");
+                    System.out.println("Email: ram@#$@gmail.com");
+                    System.out.println("Address: Office of speaker, Goa legislative Assembly\n");
+                }
+                case 2 -> {
+                    System.out.println("***********The Deputy Speaker*******************");
+                    System.out.println("Name: Shri. Joshua De Souza");
+                    System.out.println("Email: jous@email id\n");
+                    System.out.println("Address: Office of speaker, Goa legislative Assembly\n");
+                }
+                case 3 -> {
+                    System.out.println("***********************The Opposition Leader***********************");
+                    System.out.println("Name: Shri. Yuri Alemao\n");
+                    System.out.println("Constituency No/Name: 34 - Cuncolim");
+                }
+                case 4 -> {
+                    System.out.println("***********************The MLA's***********************");
+                    System.out.println("Name: Digambar Kamat");
+                    System.out.println("Party: BJP\n");
+
+                    System.out.println("Name: SHRI. JIT AROLKAR");
+                    System.out.println("Place: Mandrem");
+                    System.out.println("Party: Maharashtrawadi Gomantak Party\n");
+
+                    System.out.println("Name: SHRI. NILKANTH HALARNKAR");
+                    System.out.println("Place: Tivim");
+                    System.out.println("Party: Bharatiya Janata Party\n");
+
+                    System.out.println("Name: SHRI. Subash SHirodkar");
+                    System.out.println("Place: Shiroda");
+                    System.out.println("Party: Bharatiya Janata Party\n");
+                }
+                case 5 -> {
+                    return; // Exit the loop
+                }
+                default -> System.out.println("Invalid choice");
+            }
+        }
+    }
+
+    // Method to add a bill
+    public void addBill() {
+        System.out.print("Enter bill title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter bill description: ");
+        String description = scanner.nextLine();
+        bills.add(new Bill(title, description)); // Add the new bill to the list
+    }
+
+    // Method to remove a bill by title
+    public void removeBill() {
+        System.out.print("Enter title of bill to remove: ");
+        String title = scanner.nextLine();
+        bills.removeIf(bill -> bill.getTitle().equalsIgnoreCase(title)); // Remove the bill if title matches
+    }
+
+    // Method to pass a bill by title
+    public void passBill() {
+        System.out.print("Enter title of bill to pass: ");
+        String title = scanner.nextLine();
+        for (Bill bill : bills) {
+            if (bill.getTitle().equalsIgnoreCase(title)) {
+                bill.pass(); // Pass the bill if found
+                System.out.println("Bill passed successfully.");
+                return;
+            }
+        }
+        System.out.println("Bill not found.");
+    }
+
+    // Method to display all bills
+    public void displayBills() {
+        System.out.println("***********************The Bills***********************");
+        for (Bill bill : bills) {
+            System.out.println(bill);
+        }
+    }
+
+    // Method to manage bills (add, remove, pass, display)
+    public void manageBills() {
+        while (true) {
+            System.out.print("*********WELCOME TO THE BILL SESSION**********: ");
+            System.out.println("Choose an option:");
+            System.out.println("1. Add Bill");
+            System.out.println("2. Remove Bill");
+            System.out.println("3. Pass Bill");
+            System.out.println("4. Display Bills");
+            System.out.println("5. Exit");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1 -> addBill();
+                case 2 -> removeBill();
+                case 3 -> passBill();
+                case 4 -> displayBills();
+                case 5 -> {
+                    return; // Exit the loop
+                }
+                default -> System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    // Method to display council of ministers
+    public void council() {
+        System.out.println("Welcome to the Council of Ministers");
+
+        while (true) {
+            System.out.println("1: Home Minister");
+            System.out.println("2: Health Minister");
+            System.out.println("3: PWD Minister");
+            System.out.println("4: Finance Minister");
+            System.out.println("5: IT Minister");
+            System.out.print("PLEASE Enter your choice: ");
+            int men = scanner.nextInt();
+            scanner.nextLine();
+
+            // Display details based on the user input
+            switch (men) {
+                case 1 -> {
+                    System.out.println("************Home Minister************");
+                    System.out.println("Name: Dr Pramod Sawant\n");
+                }
+                case 2 -> {
+                    System.out.println("***********Health Minister******************");
+                    System.out.println("Name: Shri Vishwajit Rane\n");
+                }
+                case 3 -> {
+                    System.out.println("***********PWD Minister******************");
+                    System.out.println("Name: Shri Sudhin Dhavlikar\n");
+                }
+                case 4 -> {
+                    System.out.println("***********Finance Minister******************");
+                    System.out.println("Name: Pramod Sawant\n");
+                }
+                case 5 -> {
+                    return; // Exit the loop
+                }
+                default -> System.out.println("Invalid choice");
+            }
+        }
+    }
+
+    // Method to display government-related options
+    public void the_government() {
+        while (true) {
+            System.out.println("Know your government");
+            System.out.println("1: The Governor");
+            System.out.println("2: Chief Minister");
+            System.out.println("3: Council Of Ministers");
+            System.out.println("4: Exit");
+            System.out.print("Enter your choice: ");
+            int mla = scanner.nextInt();
+            scanner.nextLine();
+
+            // Display details based on the user input
+            switch (mla) {
+                case 1 -> {
+                    System.out.println("************The Governor************");
+                    System.out.println("Name: Shri. P. S. Sreedharan Pillai");
+                    System.out.println("Email: ram@#$@gmail.com");
+                    System.out.println("Address: Office of speaker, Goa legislative Assembly\n");
+                }
+                case 2 -> {
+                    System.out.println("***********The Chief Minister*******************");
+                    System.out.println("Name: Shri. Pramod Sawant");
+                    System.out.println("Email: jous@email id\n");
+                    System.out.println("Address: Office of speaker, Goa legislative Assembly\n");
+                }
+                case 3 -> council();
+                case 4 -> {
+                    return; // Exit the loop
+                }
+                default -> System.out.println("Invalid choice");
+            }
+        }
+    }
+}
+
+// Assembly class inheriting from Mla (Inheritance)
+class Assembly extends Mla {
+    // Constructor for Assembly
+    public Assembly(Scanner scanner) {
+        super(scanner); // Call the parent constructor (Mla)
+    }
+
+    // Overriding the list_mla method to provide custom behavior (Polymorphism)
+    @Override
+    public void list_mla() {
+        System.out.println("Listing MLAs from the Assembly class:");
+        super.list_mla(); // Call the parent class method
+    }
+
+    // Method to manage the assembly's options
+    public void my_Assemble() {
+        while (true) {
+            System.out.println("1: The Legislature");
+            System.out.println("2: The Government");
+            System.out.println("3: The House");
+            System.out.println("4: Contact Us");
+            System.out.println("5: Exit");
+            System.out.print("Enter your choice: ");
+            if (scanner.hasNextInt()) {
+                int menu = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (menu) {
+                    case 1 -> {
+                        System.out.println("The Legislature:");
+                        list_mla();
+                    }
+                    case 2 -> {
+                        System.out.println("The Government:");
+                        the_government();
+                    }
+                    case 3 -> {
+                        System.out.println("The House:");
+                        manageBills();
+                    }
+                    case 4 -> {
+                        System.out.println("Contact Us:");
+                        System.out.println("Email: info@goa.gov.in\n");
+                    }
+                    case 5 -> {
+                        System.out.println("Exiting...");
+                        return; // Exit the loop
+                    }
+                    default -> System.out.println("Invalid choice");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next();
+            }
+        }
+    }
+}
+
+// Main class to start the program
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // Scanner for user input
+        Assembly assembly = new Assembly(scanner); // Create Assembly object
+        assembly.my_Assemble(); // Start the program
+        scanner.close(); // Close the scanner
+    }
+}
