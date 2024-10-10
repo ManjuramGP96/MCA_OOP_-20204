@@ -1,0 +1,288 @@
+//Author:Manjuram Gajanan Prabhudessai
+// Title :Game 2048
+// 
+//
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Random;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+class Game512 extends JPanel {
+    private static final int SIZE = 4;
+    private static final int TARGET = 512;
+    private static final int TILE_SIZE = 100;
+    private static final int TILE_MARGIN = 16;
+    private int[][] grid;
+    private boolean isGameOver = false;
+    private boolean isGameWon = false;
+
+    public Game512() {
+        this.setFocusable(true);
+        this.grid = new int[4][4];
+        this.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent var1) {
+                if (!Game512.this.isGameOver && !Game512.this.isGameWon) {
+                    switch (var1.getKeyCode()) {
+                        case 37:
+                            Game512.this.moveLeft();
+                            break;
+                        case 38:
+                            Game512.this.moveUp();
+                            break;
+                        case 39:
+                            Game512.this.moveRight();
+                            break;
+                        case 40:
+                            Game512.this.moveDown();
+                    }
+
+                    Game512.this.spawnTile();
+                    Game512.this.checkGameState();
+                    Game512.this.repaint();
+                }
+
+            }
+        });
+        this.spawnTile();
+        this.spawnTile();
+    }
+
+    private void spawnTile() {
+        Random var1 = new Random();
+
+        int var2;
+        int var3;
+        do {
+            var2 = var1.nextInt(4);
+            var3 = var1.nextInt(4);
+        } while(this.grid[var2][var3] != 0);
+
+        this.grid[var2][var3] = var1.nextInt(10) < 9 ? 2 : 4;
+    }
+
+    private void moveLeft() {
+        int[][] var1 = this.grid;
+        int var2 = var1.length;
+
+        for(int var3 = 0; var3 < var2; ++var3) {
+            int[] var4 = var1[var3];
+            int[] var5 = new int[4];
+            int var6 = 0;
+
+            for(int var7 = 0; var7 < 4; ++var7) {
+                if (var4[var7] != 0) {
+                    var5[var6] = var4[var7];
+                    if (var6 > 0 && var5[var6] == var5[var6 - 1]) {
+                        var5[var6 - 1] *= 2;
+                        var5[var6] = 0;
+                    } else {
+                        ++var6;
+                    }
+                }
+            }
+
+            System.arraycopy(var5, 0, var4, 0, 4);
+        }
+
+    }
+
+    private void moveRight() {
+        int[][] var1 = this.grid;
+        int var2 = var1.length;
+
+        for(int var3 = 0; var3 < var2; ++var3) {
+            int[] var4 = var1[var3];
+            int[] var5 = new int[4];
+            int var6 = 3;
+
+            for(int var7 = 3; var7 >= 0; --var7) {
+                if (var4[var7] != 0) {
+                    var5[var6] = var4[var7];
+                    if (var6 < 3 && var5[var6] == var5[var6 + 1]) {
+                        var5[var6 + 1] *= 2;
+                        var5[var6] = 0;
+                    } else {
+                        --var6;
+                    }
+                }
+            }
+
+            System.arraycopy(var5, 0, var4, 0, 4);
+        }
+
+    }
+
+    private void moveUp() {
+        for(int var1 = 0; var1 < 4; ++var1) {
+            int[] var2 = new int[4];
+            int var3 = 0;
+
+            int var4;
+            for(var4 = 0; var4 < 4; ++var4) {
+                if (this.grid[var4][var1] != 0) {
+                    var2[var3] = this.grid[var4][var1];
+                    if (var3 > 0 && var2[var3] == var2[var3 - 1]) {
+                        var2[var3 - 1] *= 2;
+                        var2[var3] = 0;
+                    } else {
+                        ++var3;
+                    }
+                }
+            }
+
+            for(var4 = 0; var4 < 4; ++var4) {
+                this.grid[var4][var1] = var2[var4];
+            }
+        }
+
+    }
+
+    private void moveDown() {
+        for(int var1 = 0; var1 < 4; ++var1) {
+            int[] var2 = new int[4];
+            int var3 = 3;
+
+            int var4;
+            for(var4 = 3; var4 >= 0; --var4) {
+                if (this.grid[var4][var1] != 0) {
+                    var2[var3] = this.grid[var4][var1];
+                    if (var3 < 3 && var2[var3] == var2[var3 + 1]) {
+                        var2[var3 + 1] *= 2;
+                        var2[var3] = 0;
+                    } else {
+                        --var3;
+                    }
+                }
+            }
+
+            for(var4 = 0; var4 < 4; ++var4) {
+                this.grid[var4][var1] = var2[var4];
+            }
+        }
+
+    }
+
+    private void checkGameState() {
+        this.isGameOver = true;
+
+        for(int var1 = 0; var1 < 4; ++var1) {
+            for(int var2 = 0; var2 < 4; ++var2) {
+                if (this.grid[var1][var2] == 512) {
+                    this.isGameWon = true;
+                }
+
+                if (this.grid[var1][var2] == 0) {
+                    this.isGameOver = false;
+                }
+
+                if (var1 > 0 && this.grid[var1][var2] == this.grid[var1 - 1][var2]) {
+                    this.isGameOver = false;
+                }
+
+                if (var1 < 3 && this.grid[var1][var2] == this.grid[var1 + 1][var2]) {
+                    this.isGameOver = false;
+                }
+
+                if (var2 > 0 && this.grid[var1][var2] == this.grid[var1][var2 - 1]) {
+                    this.isGameOver = false;
+                }
+
+                if (var2 < 3 && this.grid[var1][var2] == this.grid[var1][var2 + 1]) {
+                    this.isGameOver = false;
+                }
+            }
+        }
+
+    }
+
+    protected void paintComponent(Graphics var1) {
+        super.paintComponent(var1);
+        var1.setColor(new Color(12299680));
+        var1.fillRect(0, 0, this.getSize().width, this.getSize().height);
+
+        for(int var2 = 0; var2 < 4; ++var2) {
+            for(int var3 = 0; var3 < 4; ++var3) {
+                this.drawTile(var1, var2, var3);
+            }
+        }
+
+        if (this.isGameOver) {
+            var1.setColor(new Color(0));
+            var1.drawString("Game Over!", 150, 250);
+        } else if (this.isGameWon) {
+            var1.setColor(new Color(0));
+            var1.drawString("You Win!", 150, 250);
+        }
+
+    }
+
+    private void drawTile(Graphics var1, int var2, int var3) {
+        int var4 = this.grid[var2][var3];
+        int var5 = this.offsetCoords(var3);
+        int var6 = this.offsetCoords(var2);
+        var1.setColor(this.getBackground(var4));
+        var1.fillRect(var5, var6, 100, 100);
+        var1.setColor(this.getForeground(var4));
+        int var7 = var4 < 100 ? 36 : (var4 < 1000 ? 32 : 24);
+        var1.setFont(new Font("SansSerif", 1, var7));
+        String var8 = String.valueOf(var4);
+        FontMetrics var9 = this.getFontMetrics(var1.getFont());
+        int var10 = var9.stringWidth(var8);
+        int var11 = -((int)var9.getLineMetrics(var8, var1).getBaselineOffsets()[2]);
+        if (var4 != 0) {
+            var1.drawString(var8, var5 + (100 - var10) / 2, var6 + 100 - (100 - var11) / 2);
+        }
+
+    }
+
+    private int offsetCoords(int var1) {
+        return var1 * 116 + 16;
+    }
+
+    private Color getForeground(int var1) {
+        return var1 < 16 ? new Color(7827045) : new Color(16381682);
+    }
+
+    private Color getBackground(int var1) {
+        switch (var1) {
+            case 2:
+                return new Color(15656154);
+            case 4:
+                return new Color(15589576);
+            case 8:
+                return new Color(15905145);
+            case 16:
+                return new Color(16094563);
+            case 32:
+                return new Color(16153695);
+            case 64:
+                return new Color(16145979);
+            case 128:
+                return new Color(15585138);
+            case 256:
+                return new Color(15584353);
+            case 512:
+                return new Color(15583312);
+            default:
+                return new Color(13484468);
+        }
+    }
+
+    public static void main(String[] var0) {
+        JFrame var1 = new JFrame();
+        var1.setTitle("512 Game");
+        var1.setDefaultCloseOperation(3);
+        var1.setSize(450, 500);
+        var1.setResizable(false);
+        var1.add(new Game512());
+        var1.setLocationRelativeTo((Component)null);
+        var1.setVisible(true);
+    }
+}
