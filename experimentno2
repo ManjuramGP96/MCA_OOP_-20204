@@ -1,0 +1,92 @@
+//author:Manjuram Gajanan Prabhudessai
+//Title:Quiz game using OOP concepts
+
+
+import java.util.Scanner;
+
+// Class representing a single question
+class Question {
+    private String questionText;
+    private String[] options;
+    private char correctAnswer;
+
+    // Constructor
+    public Question(String questionText, String[] options, char correctAnswer) {
+        this.questionText = questionText;
+        this.options = options;
+        this.correctAnswer = correctAnswer;
+    }
+
+    // Method to display the question and options
+    public void displayQuestion() {
+        System.out.println(questionText);
+        for (String option : options) {
+            System.out.println(option);
+        }
+    }
+
+    // Method to check if the provided answer is correct
+    public boolean isCorrect(char userAnswer) {
+        return Character.toUpperCase(userAnswer) == correctAnswer;
+    }
+
+    public char getCorrectAnswer() {
+        return correctAnswer;
+    }
+}
+
+// Class representing the quiz game logic
+class QuizGame {
+    private Question[] questions;
+    private int score;
+
+    // Constructor
+    public QuizGame(Question[] questions) {
+        this.questions = questions;
+        this.score = 0;  // Initialize score
+    }
+
+    // Method to start the quiz
+    public void startQuiz() {
+        Scanner scanner = new Scanner(System.in);
+
+        for (Question question : questions) {
+            question.displayQuestion();
+            System.out.print("Your answer (A/B/C/D): ");
+            char userAnswer = scanner.next().charAt(0);
+
+            if (question.isCorrect(userAnswer)) {
+                System.out.println("Correct!\n");
+                score++;
+            } else {
+                System.out.println("Wrong! The correct answer is " + question.getCorrectAnswer() + ".\n");
+            }
+        }
+
+        // Display the final score
+        System.out.println("Quiz over! Your score: " + score + "/" + questions.length);
+        scanner.close();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Create the quiz questions related to Goa
+        Question[] questions = new Question[] {
+            new Question("1. What is the capital of Goa?", 
+                         new String[] {"A. Panaji", "B. Margao", "C. Vasco da Gama", "D. Mapusa"}, 'A'),
+            new Question("2. Which is the official language of Goa?", 
+                         new String[] {"A. Hindi", "B. Marathi", "C. Konkani", "D. English"}, 'C'),
+            new Question("3. In which year did Goa become a part of India?", 
+                         new String[] {"A. 1947", "B. 1961", "C. 1975", "D. 1987"}, 'B'),
+            new Question("4. Which of the following is a famous beach in Goa?", 
+                         new String[] {"A. Juhu Beach", "B. Baga Beach", "C. Marina Beach", "D. Kovalam Beach"}, 'B'),
+            new Question("5. What is the state animal of Goa?", 
+                         new String[] {"A. Bengal Tiger", "B. Asiatic Lion", "C. Gaur", "D. Indian Elephant"}, 'C')
+        };
+
+        // Create the quiz game and start it
+        QuizGame quiz = new QuizGame(questions);
+        quiz.startQuiz();
+    }
+}
