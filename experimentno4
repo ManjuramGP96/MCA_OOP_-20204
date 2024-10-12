@@ -1,0 +1,187 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+public class Archery extends JPanel implements MouseListener, ActionListener {
+
+    private int arrowX, arrowY; // Arrow position
+    private int targetX, targetY; // Target center position
+    private int[] targetRadii = {100, 80, 60, 40}; // Radii of the four target circles
+    private boolean shotFired;
+    private int[] scores; // Scores for both players
+    private int currentPlayer; // Index for current player (0 or 1)
+    private int currentRound; // Current round
+    private JButton restartButton;
+    private boolean isGameOver;
+    private Timer timer; // Timer for animation
+    private int arrowTargetY; // Y position to move the arrow to
+    private JLabel statusLabel; // Label to display status messages
+
+    public Archery() {
+        this.arrowX = 100; // Starting arrow position (fixed)
+        this.arrowY = 300; // Initial Y position of the arrow
+        this.targetX = 600; // Target center position
+        this.targetY = 150; // Target center Y position
+        this.shotFired = false; // Check if the arrow has been shot
+        this.scores = new int[2]; // Scores for two players
+        this.currentPlayer = 0; // Start with Player 1
+        this.currentRound = 1; // Start with Round 1
+        this.isGameOver = false; // Game over state
+
+        this.setPreferredSize(new Dimension(800, 400));
+        this.setBackground(Color.CYAN); // Background color
+
+        this.addMouseListener(this);
+
+        restartButton = new JButton("Restart");
+        restartButton.addActionListener(this);
+        this.add(restartButton);
+        restartButton.setVisible(false); // Hide restart button at start
+
+        // Set up the timer for arrow animation
+        timer = new Timer(20, e -> {
+            if (arrowY > arrowTargetY) {
+                arrowY -= 5; // Move arrow upward toward target
+                repaint();
+            } else {
+                // Animation finished
+                timer.stop();
+                shotFired = false; // Allow for another shot
+                checkGameOver(); // Check if the game is over
+                repaint();
+            }
+        });
+
+        // Status label to display current player and round info
+        statusLabel = new JLabel("Player 1's Turn - Round 1");
+        this.add(statusLabel, BorderLayout.NORTH);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Draw target (4 concentric circles)
+        Color[] colors = {Color.RED, Color.YELLOW, Color.BLUE, Color.WHITE}; // Different colors for each circle
+        for (int i = 0; i < targetRadii.length; i++) {
+            g.setColor(colors[i]);
+            g.fillOval(targetX - targetRadii[i], targetY - targetRadii[i], targetRadii[i] * 2, targetRadii[i] * 2);
+        }
+
+        // Draw arrow (if the shot is not fired yet)
+        if (!shotFired) {
+            g.setColor(Color.BLACK);
+            g.drawLine(arrowX, arrowY, arrowX + 40, arrowY); // Draw the arrow line
+        }
+
+        // Draw scores
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("Player 1 Score: " + scores[0], 20, 30);
+        g.drawString("Player 2 Score: " + scores[1], 20, 60);
+
+        // Show restart button when the game is over
+        if (isGameOver) {
+            restartButton.setVisible(true);
+        }
+    }
+
+    // Reset game state when restart button is pressed
+    public void resetGame() {
+        arrowY = 300; // Reset arrow position
+        shotFired = false; // Reset shot status
+        currentPlayer = 0; // Reset to Player 1
+        currentRound = 1; // Reset to Round 1
+        scores[0] = 0; // Reset Player 1 score
+        scores[1] = 0; // Reset Player 2 score
+        isGameOver = false; // Reset game over status
+        repaint(); // Repaint the panel
+        statusLabel.setText("Player 1's Turn - Round 1"); // Reset status label
+    }
+
+    // Calculate score based on which circle the click lands in
+    private void calculateScore(int mouseX, int mouseY) {
+        int distX = targetX - mouseX;
+        int distY = targetY - mouseY;
+        int distance = (int) Math.sqrt(distX * distX + distY * distY); // Euclidean distance from target center
+
+        if (distance <= targetRadii[3]) {
+            scores[currentPlayer] += 100; // Innermost circle
+        } else if (distance <= targetRadii[2]) {
+            scores[currentPlayer] += 75; // Second circle
+        } else if (distance <= targetRadii[1]) {
+            scores[currentPlayer] += 50; // Third circle
+        } else if (distance <= targetRadii[0]) {
+            scores[currentPlayer] += 25; // Outermost circle
+        } else {
+            scores[currentPlayer] += 0; // Missed target
+        }
+    }
+
+    // Check if the game is over after 5 rounds
+    private void checkGameOver() {
+        if (currentRound >= 5) {
+            isGameOver = true; // Mark game as over
+            String winner = scores[0] > scores[1] ? "Player 1 Wins!" : "Player 2 Wins!";
+            statusLabel.setText(winner); // Display winner
+        } else {
+            // Switch to next player or round
+            if (currentPlayer == 0) {
+                currentPlayer = 1; // Switch to Player 2
+                statusLabel.setText("Player 2's Turn - Round " + (currentRound));
+            } else {
+                currentPlayer = 0; // Switch to Player 1
+                currentRound++; // Move to next round
+                statusLabel.setText("Player 1's Turn - Round " + (currentRound));
+            }
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (!shotFired && !isGameOver) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+
+            // Check where the arrow lands and calculate the score
+            calculateScore(mouseX, mouseY);
+            arrowTargetY = mouseY; // Set target Y position to where the user clicked
+            shotFired = true; // Mark the shot as fired
+            timer.start(); // Start the arrow animation
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == restartButton) {
+            restartButton.setVisible(false); // Hide the button again
+            resetGame(); // Reset the game
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
+
+    // Main method to run the game
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Archery Game");
+        Archery archeryGame = new Archery();
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(archeryGame);
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
